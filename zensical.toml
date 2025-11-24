@@ -21,11 +21,10 @@ site_name = "Micromake Documentation"
 # fragment.
 #
 # Read more: https://zensical.org/docs/setup/basics/#copyright
-# copyright = """
-# Copyright &copy; 2025 The Micormake
-# """
-# docs_dir = "docs"                                # 文档目录
-# site_dir = "site"                                # 生成的网站目录
+copyright = """
+Copyright &copy; 2025 The Micormake
+"""
+
 use_directory_urls = true                        # 使用目录形式的URL (例如: /page/ 而不是 /page.html)
 
 # ===== 仓库配置 =====
@@ -34,10 +33,10 @@ repo_name = "micromake.github.io"                           # 右上角的名字
 edit_uri = "edit/main/docs"                              # 编辑按钮跳转的链接
 
 extra_css = [
-    "stylesheets/extra.css",         # 额外样式
+    "stylesheets/extra.css",         # 额外样式1
     "stylesheets/extra2.css",        # 额外样式2
     "stylesheets/customize.css",     # 按钮圆角化等自定义样式
-    "stylesheets/ziti.css",
+    "stylesheets/ziti.css",          # 自定义中文字体
     ]
 
 extra_javascript = ["javascripts/glm-config.js","javascripts/glm-translate.js",]
@@ -260,7 +259,7 @@ toggle.name = "切换至日间模式"
 # - https://zensical.org/docs/authoring/icons-emojis/#search
 # ----------------------------------------------------------------------------
 [project.theme.icon]
-#logo = "lucide/smile"
+logo = "lucide/book-open"
 repo = "fontawesome/brands/github"          # 仓库图标
 
 # ----------------------------------------------------------------------------
@@ -269,9 +268,9 @@ repo = "fontawesome/brands/github"          # 仓库图标
 [project.extra]
 generator = true
 
-# [[project.extra.social]]
-# icon = "fontawesome/brands/github"
-# link = "https://github.com/micormake/micromake.github.io"
+[[project.extra.social]]
+icon = "fontawesome/brands/github"
+link = "https://github.com/micromake"
 
 [[project.extra.alternate]]
 name = "English"
@@ -297,10 +296,8 @@ minify_js = true
 
 
 # ==========================================
-# Markdown 扩展配置 [Markdown Extensions]
+# [Markdown Extensions]
 # ==========================================
-
-# ===== 官方默认配置（严格按照 Zensical 官方文档）=====
 [project.markdown_extensions.abbr]
 [project.markdown_extensions.admonition]
 [project.markdown_extensions.attr_list]
