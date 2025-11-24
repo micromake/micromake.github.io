@@ -32,12 +32,12 @@ repo_url = "https://github.com/micromake/micromake.github.io"  # 右上角点击
 repo_name = "micromake.github.io"                           # 右上角的名字
 edit_uri = "edit/main/docs"                              # 编辑按钮跳转的链接
 
-extra_css = [
-    "stylesheets/extra.css",         # 额外样式1
-    "stylesheets/extra2.css",        # 额外样式2
-    "stylesheets/customize.css",     # 按钮圆角化等自定义样式
-    "stylesheets/ziti.css",          # 自定义中文字体
-    ]
+# extra_css = [
+#     "stylesheets/extra.css",         # 额外样式1
+#     "stylesheets/extra2.css",        # 额外样式2
+#     "stylesheets/customize.css",     # 按钮圆角化等自定义样式
+#     "stylesheets/ziti.css",          # 自定义中文字体
+#     ]
 
 extra_javascript = ["javascripts/glm-config.js","javascripts/glm-translate.js",]
 
