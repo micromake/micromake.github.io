@@ -44,7 +44,14 @@ extra_javascript = ["javascripts/glm-config.js","javascripts/glm-translate.js",]
 
 nav = [
   { "导览" = "index.md" },
-  { "Markdown in 5min" = "markdown.md" },
+  { "DIY套件" = "markdown.md" },
+  { "升级套件" = "markdown.md" },
+  { "机械部件" = "markdown.md" },
+  { "控制屏" = "markdown.md" },
+  { "控制板" = "markdown.md" },
+  { "驱动板" = "markdown.md" },
+  { "传感器" = "markdown.md" },
+  { "教程" = "markdown.md" },
 ]
 
 
