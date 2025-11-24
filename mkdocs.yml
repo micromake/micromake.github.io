@@ -20,15 +20,15 @@
 
 # Project information
 site_name: Micromake Documentation
-site_url: https://zensical.org/docs/
+site_url: https://micromake.github.io
 # site_description: >-
 #   Write your documentation in Markdown and create a professional static site in
 #   minutes – searchable, customizable, in 60+ languages, for all devices
 
 # Repository
-repo_name: zensical/zensical
-repo_url: https://github.com/zensical/zensical
-edit_uri: https://github.com/zensical/docs/edit/master/docs/
+repo_name: Micromake Documentation
+repo_url: https://github.com/micromake/micromake.github.io
+edit_uri: edit/main/docs
 
 # Copyright
 copyright: Copyright &copy; 2025 Micromake
@@ -122,9 +122,9 @@ extra:
   status:
     new: Recently added
     deprecated: Deprecated
-  # social:
-  #   - icon: fontawesome/brands/github
-  #     link: https://github.com/zensical
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/micromake
   #   - icon: fontawesome/brands/discord
   #     link: https://discord.com/invite/hqXRNq9CjT
   #   - icon: fontawesome/brands/python
@@ -148,11 +148,11 @@ markdown_extensions:
   - md_in_html
   - toc:
       permalink: true
-  - zensical.extensions.preview:
-      targets:
-        include:
-          - customization.md
-          - setup/extensions/*
+  # - zensical.extensions.preview:
+  #     targets:
+  #       include:
+  #         - customization.md
+  #         - setup/extensions/*
   - pymdownx.arithmatex:
       generic: true
   - pymdownx.betterem:
@@ -195,11 +195,12 @@ markdown_extensions:
 nav:
   # - Home: https://zensical.org
   # - Get started:
-  - Get started: get-started.md
-  - Create your site: create-your-site.md
-  - Publish your site: publish-your-site.md
-  - Customization: customization.md
-  - How to upgrade: upgrade.md
-  - Browser support: browser-support.md
-  - License: license.md
-
+  - 导览: index.md
+  - DIY套件: create-your-site.md
+  - 升级套件: publish-your-site.md
+  - 机械部件: customization.md
+  - 触摸屏: upgrade.md
+  - 控制板: browser-support.md
+  - 驱动板: license.md
+  - 传感器: get-started.md
+  - 教程: markdown.md
