@@ -1,0 +1,205 @@
+# Copyright (c) Zensical LLC <https://zensical.org>
+
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to
+# deal in the Software without restriction, including without limitation the
+# rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+# sell copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+# IN THE SOFTWARE.
+
+# Project information
+site_name: Micromake Documentation
+site_url: https://zensical.org/docs/
+# site_description: >-
+#   Write your documentation in Markdown and create a professional static site in
+#   minutes – searchable, customizable, in 60+ languages, for all devices
+
+# Repository
+repo_name: zensical/zensical
+repo_url: https://github.com/zensical/zensical
+edit_uri: https://github.com/zensical/docs/edit/master/docs/
+
+# Copyright
+copyright: Copyright &copy; 2025 Micromake
+
+# Configuration
+theme:
+  language: zh
+  name: material
+  # custom_dir: overrides
+  features:
+    - announce.dismiss
+    - content.action.edit
+    - content.action.view
+    - content.code.annotate
+    - content.code.copy
+    - content.code.select
+    - content.footnote.tooltips
+    - content.tabs.link
+    - content.tooltips
+    - navigation.footer
+    - navigation.indexes
+    - navigation.path
+    - navigation.sections
+    # - navigation.tabs
+    - navigation.top
+    - search.highlight
+    
+  palette:
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: lucide/sun-moon
+        name: Switch to light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: lucide/sun
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: light blue
+      toggle:
+        icon: lucide/moon-star
+        name: Switch to system preference
+  # favicon: assets/zensical.png #顶部图标
+  # logo: assets/zensical.svg #图标LOGO
+  icon:
+    tag:
+      default: lucide/hash
+
+extra_css:
+  - assets/stylesheets/extra.css
+  - assets/stylesheets/extra2.css
+  - assets/stylesheets/customize.css
+  - assets/stylesheets/ziti.css
+
+extra_javascript:
+  - assets/javascripts/glm-config.js
+  - assets/javascripts/glm-translate.js
+  
+# Plugins
+plugins:
+  - search
+  - tags
+
+# Additional configuration
+extra:
+  alternate:
+    - name: English
+      link: "javascript:translateTo('english');"
+      lang: en
+    - name: Français
+      link: "javascript:translateTo('french');"
+      lang: fr
+    - name: 한국어
+      link: "javascript:translateTo('korean');"
+      lang: kr
+    - name: 日本語
+      link: "javascript:translateTo('japanese');"
+      lang: ja
+    - name: 中文
+      link: "javascript:translateTo('chinese_simplified');"
+      lang: zh
+      
+  # homepage: https://zensical.org
+  scope: /
+  annotate:
+    json: [.s2]
+  status:
+    new: Recently added
+    deprecated: Deprecated
+  # social:
+  #   - icon: fontawesome/brands/github
+  #     link: https://github.com/zensical
+  #   - icon: fontawesome/brands/discord
+  #     link: https://discord.com/invite/hqXRNq9CjT
+  #   - icon: fontawesome/brands/python
+  #     link: https://pypi.org/project/zensical/
+  #   - icon: fontawesome/brands/bluesky
+  #     link: https://bsky.app/profile/zensical.org
+  #   - icon: fontawesome/brands/mastodon
+  #     link: https://fosstodon.org/@zensical
+  #   - icon: fontawesome/brands/x-twitter
+  #     link: https://x.com/zensical
+  tags:
+    default: default
+
+# Extensions
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - toc:
+      permalink: true
+  - zensical.extensions.preview:
+      targets:
+        include:
+          - customization.md
+          - setup/extensions/*
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_generator: !!python/name:zensical.extensions.emoji.to_svg
+      emoji_index: !!python/name:zensical.extensions.emoji.twemoji
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.magiclink:
+      normalize_issue_symbols: true
+      repo_url_shorthand: true
+      user: zensical
+      repo: zensical
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+      combine_header_slug: true
+      slugify: !!python/object/apply:pymdownx.slugs.slugify
+        kwds:
+          case: lower
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+
+# Page tree
+nav:
+  # - Home: https://zensical.org
+  # - Get started:
+  - Get started: get-started.md
+  - Create your site: create-your-site.md
+  - Publish your site: publish-your-site.md
+  - Customization: customization.md
+  - How to upgrade: upgrade.md
+  - Browser support: browser-support.md
+  - License: license.md
+
