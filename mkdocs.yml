@@ -57,11 +57,11 @@ theme:
     - search.highlight
     
   palette:
-    - media: "(prefers-color-scheme)"
-      toggle:
-        icon: lucide/sun-moon
-        # name: Switch to light mode
-        name: 关闭自动模式
+    # - media: "(prefers-color-scheme)"
+    #   toggle:
+    #     icon: lucide/sun-moon
+    #     # name: Switch to light mode
+    #     name: 关闭自动模式
         
     - media: "(prefers-color-scheme: light)"
       scheme: default
