@@ -60,21 +60,27 @@ theme:
     - media: "(prefers-color-scheme)"
       toggle:
         icon: lucide/sun-moon
-        name: Switch to light mode
+        # name: Switch to light mode
+        name: 关闭自动模式
+        
     - media: "(prefers-color-scheme: light)"
       scheme: default
       primary: indigo
       accent: indigo
       toggle:
         icon: lucide/sun
-        name: Switch to dark mode
+        # name: Switch to dark mode
+        name: 切换至夜间模式
+        
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
       primary: indigo
       accent: light blue
       toggle:
         icon: lucide/moon-star
-        name: Switch to system preference
+        # name: Switch to system preference
+        name: 切换至日间模式
+        
   # favicon: assets/zensical.png #顶部图标
   # logo: assets/zensical.svg #图标LOGO
   icon:
@@ -120,8 +126,8 @@ extra:
   annotate:
     json: [.s2]
   status:
-    new: Recently added
-    deprecated: Deprecated
+    new: 最近添加
+    deprecated: 已弃用
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/micromake
