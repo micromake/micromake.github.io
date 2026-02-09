@@ -31,7 +31,7 @@ repo_url: https://github.com/micromake/micromake.github.io
 edit_uri: edit/main/docs
 
 # Copyright
-copyright: Copyright &copy; 2025 Micromake
+copyright: Copyright &copy; 2026 Micromake
 
 # Configuration
 theme:
@@ -133,12 +133,6 @@ extra:
       link: https://github.com/micromake
   #   - icon: fontawesome/brands/discord
   #     link: https://discord.com/invite/hqXRNq9CjT
-  #   - icon: fontawesome/brands/python
-  #     link: https://pypi.org/project/zensical/
-  #   - icon: fontawesome/brands/bluesky
-  #     link: https://bsky.app/profile/zensical.org
-  #   - icon: fontawesome/brands/mastodon
-  #     link: https://fosstodon.org/@zensical
   #   - icon: fontawesome/brands/x-twitter
   #     link: https://x.com/zensical
   tags:
@@ -154,11 +148,6 @@ markdown_extensions:
   - md_in_html
   - toc:
       permalink: true
-  # - zensical.extensions.preview:
-  #     targets:
-  #       include:
-  #         - customization.md
-  #         - setup/extensions/*
   - pymdownx.arithmatex:
       generic: true
   - pymdownx.betterem:
@@ -200,9 +189,11 @@ markdown_extensions:
 # Page tree
 nav:
   # - Home: https://zensical.org
-  # - Get started:
+
   - 导览: index.md
-  - DIY套件: create-your-site.md
+  - DIY套件: 
+            - 三角洲3D打印机:
+              - delta/1/1.md
   - 升级套件: publish-your-site.md
   - 机械部件: customization.md
   - 触摸屏: upgrade.md
