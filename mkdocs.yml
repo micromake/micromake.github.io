@@ -89,16 +89,40 @@ extra:
     - name: English
       link: "javascript:translateTo('english');"
       lang: en
+      
     - name: Français
       link: "javascript:translateTo('french');"
       lang: fr
+
+    - name: Deutsch
+      link: "javascript:translateTo('deutsch');"
+      lang: de
+      
+    - name: Español
+      link: "javascript:translateTo('spanish');"
+      lang: es
+      
+    - name: Português
+      link: "javascript:translateTo('portuguese');"
+      lang: br
+      
+    - name: العربية
+      link: "javascript:translateTo('arabic');"
+      lang: sa
+
     - name: 한국어
       link: "javascript:translateTo('korean');"
       lang: kr
+      
     - name: 日本語
       link: "javascript:translateTo('japanese');"
       lang: ja
-    - name: 中文
+      
+    - name: 繁体中文
+      link: "javascript:translateTo('chinese_traditional');"
+      lang: zh
+      
+    - name: 简体中文
       link: "javascript:translateTo('chinese_simplified');"
       lang: zh
       
@@ -177,4 +201,5 @@ nav:
               - delta/2/2.md
               - delta/3/3.md
               - delta/4/4.md
+              - delta/5/5.md
 
