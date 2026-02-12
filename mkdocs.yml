@@ -41,7 +41,7 @@ theme:
   features:
     - announce.dismiss
     - content.action.edit
-    - content.action.view
+    # - content.action.view
     - content.code.annotate
     - content.code.copy
     - content.code.select
@@ -57,32 +57,13 @@ theme:
     - search.highlight
     
   palette:
-    # - media: "(prefers-color-scheme)"
-    #   toggle:
-    #     icon: lucide/sun-moon
-    #     # name: Switch to light mode
-    #     name: 关闭自动模式
-        
-    - media: "(prefers-color-scheme: light)"
-      scheme: default
-      primary: indigo
-      accent: indigo
+    - media: "(prefers-color-scheme)"
       toggle:
-        icon: lucide/sun
-        # name: Switch to dark mode
-        name: 切换至夜间模式
-        
-    - media: "(prefers-color-scheme: dark)"
-      scheme: slate
-      primary: indigo
-      accent: light blue
-      toggle:
-        icon: lucide/moon-star
-        # name: Switch to system preference
-        name: 切换至日间模式
-        
-  # favicon: assets/zensical.png #顶部图标
-  # logo: assets/zensical.svg #图标LOGO
+        icon: lucide/sun-moon
+        name: Switch to light mode
+       
+  favicon: assets/logo.png
+  logo: assets/logo.png
   icon:
     tag:
       default: lucide/hash
@@ -188,16 +169,12 @@ markdown_extensions:
 
 # Page tree
 nav:
-  # - Home: https://zensical.org
-
+  # - Home: https://micromake.github.io
   - 导览: index.md
   - DIY套件: 
             - 三角洲3D打印机:
               - delta/1/1.md
-  - 升级套件: publish-your-site.md
-  - 机械部件: customization.md
-  - 触摸屏: upgrade.md
-  - 控制板: browser-support.md
-  - 驱动板: license.md
-  - 传感器: get-started.md
-  - 教程: markdown.md
+              - delta/2/2.md
+              - delta/3/3.md
+              - delta/4/4.md
+
