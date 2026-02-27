@@ -85,10 +85,10 @@ plugins:
 
 # Additional configuration
 extra:
-  alternate:
-    - name: English
-      link: "#glm-translate-english"
-      lang: en
+  # alternate:
+  #   - name: English
+  #     link: "#glm-translate-english"
+  #     lang: en
       
     # - name: Français
     #   link: "#glm-translate-french"
@@ -122,9 +122,9 @@ extra:
     #   link: "#glm-translate-chinese_traditional"
     #   lang: zh
       
-    - name: 简体中文
-      link: "#glm-translate-chinese_simplified"
-      lang: zh
+    # - name: 简体中文
+    #   link: "#glm-translate-chinese_simplified"
+    #   lang: zh
       
   # homepage: https://zensical.org
   scope: /
