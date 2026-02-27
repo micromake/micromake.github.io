@@ -87,7 +87,7 @@ plugins:
 extra:
   alternate:
     - name: English
-      link: "javascript:translateTo('english');"
+      link: "#glm-translate-english"
       lang: en
       
     - name: Français
