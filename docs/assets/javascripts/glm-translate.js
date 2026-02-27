@@ -1,6 +1,7 @@
+// @ts-nocheck
 /**
- * 智谱清言API翻译系统 - 高性能版本
- * 为MkDocs Material提供高质量、高速度的页面翻译功能
+ * 硅基流动 Qwen3-8B 翻译系统 - 高性能版本
+ * 为 MkDocs Material 提供高质量、高速度的页面翻译功能
  * 作者: Wcowin
  * 版本: 2.0.0
  */
@@ -255,6 +256,7 @@
         fastMode: true
       },
       api: {
+        model: 'glm-4-flash-250414',
         timeout: 5000,
         maxRetries: 2,
         retryDelay: 500
@@ -298,132 +300,39 @@
   
   const LANGUAGE_MAP = getLanguageMap();
 
-  // 双API密钥配置 - 协同翻译系统
-  const API_KEYS = {
-    primary: 'cec9c14ba1f44daa8b7d578790fb81ec.eVyBp1Zo66NHgl4p',
-    secondary: '46ad7781e9fa44cb9b31d11a9696da89.GCUpkep25U5Y6vBg' // 第二个API密钥用于协同翻译
-  };
-
-  // API状态监控
-  const API_STATUS = {
-    primary: { available: true, lastError: null, requestCount: 0 },
-    secondary: { available: true, lastError: null, requestCount: 0 }
-  };
-
-  // 获取API密钥（支持双API协同翻译）
+  // 获取 API 密钥（支持从全局配置中读取）
   function getApiKey(apiIndex = 0) {
-    // 优先从GLM_TRANSLATE_CONFIG获取
+    // 1. 优先从 GLM_TRANSLATE_CONFIG 获取（如果你单独为翻译配置了 key）
     if (window.GLM_TRANSLATE_CONFIG && typeof window.GLM_TRANSLATE_CONFIG.getApiKey === 'function') {
       const key = window.GLM_TRANSLATE_CONFIG.getApiKey();
       if (key && key !== 'placeholder') {
         return key;
       }
     }
-    
-    // 根据索引返回对应的API密钥
-    const apiType = apiIndex === 0 ? 'primary' : 'secondary';
-    const apiKey = API_KEYS[apiType];
-    
-    if (!apiKey) {
-      console.error(`❌ 未找到智谱清言API密钥 (索引: ${apiIndex}, 类型: ${apiType})`);
-      API_STATUS[apiType].available = false;
-      return null;
+
+    // 2. 其次：统一复用全局的 GLM_API_KEY（现在实际为硅基流动 API Key）
+    if (window.GLM_API_KEY) {
+      return window.GLM_API_KEY;
     }
-    
-    // 记录API使用
-    API_STATUS[apiType].requestCount++;
-    console.log(`🔑 使用 ${apiType} API密钥 (请求计数: ${API_STATUS[apiType].requestCount})`);
-    
-    return apiKey;
+
+    // 3. 再次：从 GLM_CONFIG 中读取（如果你在那边单独挂了 apiKey）
+    if (window.GLM_CONFIG && window.GLM_CONFIG.apiKey) {
+      return window.GLM_CONFIG.apiKey;
+    }
+
+    console.error('❌ 未找到翻译用的 API 密钥，请确保已在 glm-api-config.js 中配置 GLM_API_KEY');
+    return null;
   }
 
-  // 简化的文本检测 - 优先翻译包含中文的内容
+  // 简化的文本检测 - 包含中文就翻译
   function shouldTranslateText(text, element = null) {
     if (!text || typeof text !== 'string') return false;
     
     const trimmedText = text.trim();
+    if (trimmedText.length < 2) return false;
     
-    // 基本长度检查
-    if (trimmedText.length === 0 || trimmedText.length < 2) return false;
-    
-    // 首先使用GLM_CONFIG的shouldTranslateText进行元素检查
-    if (element && window.GLM_CONFIG && window.GLM_CONFIG.shouldTranslateText) {
-      if (!window.GLM_CONFIG.shouldTranslateText(element, trimmedText)) {
-        console.log(`⏭️ GLM_CONFIG元素检查跳过: ${element.tagName}, 文本: ${trimmedText.slice(0, 30)}...`);
-        return false;
-      }
-    }
-    
-    // 检查是否包含中文字符
-    const hasChinese = /[\u4e00-\u9fff]/.test(trimmedText);
-    
-    // 特别处理导航栏和列表元素，优先确保其能够被翻译
-    if (element && element.tagName && hasChinese) {
-      const tagName = element.tagName.toLowerCase();
-      
-      // 对于li元素，只要包含中文就应该翻译
-      if (tagName === 'li') {
-        console.log('✅ li元素包含中文，应该翻译:', trimmedText.slice(0, 30) + '...');
-        return true;
-      }
-      
-      // 对于导航栏相关元素，只要包含中文就应该翻译
-      if (element.classList?.contains('md-ellipsis') ||
-          element.closest('.md-tabs') ||
-          element.closest('.md-nav') ||
-          element.closest('.md-tabs__link') ||
-          element.closest('.md-nav__link') ||
-          element.closest('.md-nav__item') ||
-          element.closest('.md-sidebar') ||
-          (tagName === 'a' && element.closest('.md-tabs')) ||
-          (tagName === 'span' && element.closest('.md-tabs'))) {
-        console.log('✅ 导航栏元素包含中文，应该翻译:', trimmedText.slice(0, 30) + '...');
-        return true;
-      }
-      
-      // 对于标题和内容区域的元素
-      if (tagName === 'h1' || tagName === 'h2' || tagName === 'h3' || 
-          tagName === 'h4' || tagName === 'h5' || tagName === 'h6' ||
-          tagName === 'p' || tagName === 'div' || tagName === 'span') {
-        console.log('✅ 内容元素包含中文，应该翻译:', trimmedText.slice(0, 30) + '...');
-        return true;
-      }
-    }
-    
-    // 对于包含中文的文本，优先考虑翻译
-    if (hasChinese) {
-      // 使用GLM_CONFIG的跳过检查（但对中文内容更宽松）
-      if (window.GLM_CONFIG && window.GLM_CONFIG.shouldSkipTranslation) {
-        if (window.GLM_CONFIG.shouldSkipTranslation(trimmedText)) {
-          console.log('⚠️ GLM_CONFIG建议跳过含中文文本:', trimmedText.slice(0, 30) + '...');
-          return false;
-        }
-      }
-      
-      // 包含中文的文本，默认应该翻译
-      console.log('✅ 包含中文，应该翻译:', trimmedText.slice(0, 30) + '...');
-      return true;
-    }
-    
-    // 对于不包含中文的文本，应用严格的跳过规则
-    if (window.GLM_CONFIG && window.GLM_CONFIG.shouldSkipTranslation) {
-      if (window.GLM_CONFIG.shouldSkipTranslation(trimmedText)) {
-        return false;
-      }
-    }
-    
-    // 跳过纯占位符格式的文本
-    if (/^[{}\[\]$_\s]+$/.test(trimmedText)) return false;
-    
-    // 跳过明显的占位符文本
-    if (/^\{.*\}$/.test(trimmedText) || 
-        /^\[\[.*\]\]$/.test(trimmedText) || 
-        /^\$\{.*\}$/.test(trimmedText) ||
-        /^__[A-Z_]+__$/.test(trimmedText)) {
-      return false;
-    }
-    
-    return true;
+    // 包含中文就翻译
+    return /[\u4e00-\u9fff]/.test(trimmedText);
   }
 
   // 简化缓存管理
@@ -671,131 +580,163 @@
     
     // 恢复保护的词汇
     protectedTexts.forEach(({ placeholder, original }) => {
-      result = result.replace(new RegExp(placeholder, 'g'), original);
+      // 匹配原始占位符
+      result = result.replace(new RegExp(placeholder, 'gi'), original);
+      
+      // 匹配API可能返回的变形占位符（如 "Protected Tech 1" 等）
+      const parts = placeholder.match(/PROTECTED_(\w+)_(\d+)/i);
+      if (parts) {
+        const type = parts[1].toLowerCase().replace(/_/g, ' ');
+        const index = parts[2];
+        // 匹配各种变形格式
+        const variations = [
+          `Protected ${type} ${index}`,
+          `Protected_${type}_${index}`,
+          `protected ${type} ${index}`,
+          `PROTECTED ${type.toUpperCase()} ${index}`,
+          `Protected${type}${index}`,
+          `protected_${type}_${index}`
+        ];
+        variations.forEach(v => {
+          result = result.replace(new RegExp(v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'), original);
+        });
+      }
     });
+    
+    // 清理残留的占位符格式（兜底处理）
+    result = result.replace(/Protected[\s_]*(Tech|Custom|Domain|Function|Email|Url|Variable|Color|Css[\s_]*Unit)[\s_]*\d+/gi, '');
     
     // 基本的空格清理
     return result.replace(/\s+/g, ' ').trim();
   }
 
-  // 调用智谱清言API进行翻译 - 增强版本（支持双API和代码注释）
+  // 翻译质量检查
+  function validateTranslation(original, translated, targetLang) {
+    if (!translated || translated.length === 0) {
+      console.warn('⚠️ 翻译结果为空');
+      return false;
+    }
+    
+    // 检查是否返回了原文（翻译失败）
+    if (translated === original) {
+      console.warn('⚠️ 翻译结果与原文相同');
+      return false;
+    }
+    
+    // 检查是否包含错误提示
+    const errorPatterns = [
+      /无法翻译/i, /翻译失败/i, /error/i, /sorry/i,
+      /I cannot/i, /I can't/i, /unable to/i,
+      /placeholder/i, /占位符/i
+    ];
+    for (const pattern of errorPatterns) {
+      if (pattern.test(translated)) {
+        console.warn(`⚠️ 翻译结果包含错误提示: ${translated.slice(0, 50)}`);
+        return false;
+      }
+    }
+    
+    // 检查目标语言是否正确（简单检查）
+    if (targetLang === 'english') {
+      // 英文翻译不应该包含大量中文
+      const chineseRatio = (translated.match(/[\u4e00-\u9fff]/g) || []).length / translated.length;
+      if (chineseRatio > 0.3) {
+        console.warn(`⚠️ 英文翻译包含过多中文: ${chineseRatio.toFixed(2)}`);
+        return false;
+      }
+    } else if (targetLang === 'japanese') {
+      // 日文翻译应该包含日文字符
+      const hasJapanese = /[\u3040-\u309f\u30a0-\u30ff]/.test(translated);
+      const hasChinese = /[\u4e00-\u9fff]/.test(translated);
+      if (!hasJapanese && !hasChinese && original.length > 5) {
+        console.warn('⚠️ 日文翻译可能不正确');
+        // 不直接返回false，因为有些日文可能只用汉字
+      }
+    }
+    
+    return true;
+  }
+
+  // 从术语字典查找翻译 - 只做精确匹配
+  function lookupTerminology(text, targetLang) {
+    if (!window.GLM_CONFIG || !window.GLM_CONFIG.prompts || !window.GLM_CONFIG.prompts.terminology) {
+      return null;
+    }
+    
+    const terminology = window.GLM_CONFIG.prompts.terminology;
+    const trimmedText = text.trim();
+    
+    // 只做精确匹配，不做部分匹配
+    if (terminology[trimmedText] && terminology[trimmedText][targetLang]) {
+      console.log(`📖 术语字典命中: ${trimmedText} -> ${terminology[trimmedText][targetLang]}`);
+      return terminology[trimmedText][targetLang];
+    }
+    
+    return null;
+  }
+
+  // 调用智谱清言API进行翻译 - 简化版本
   async function translateWithGLM(text, targetLang, retryCount = 0, apiIndex = 0) {
     const startTime = Date.now();
+    
+    // 优先检查术语字典
+    const terminologyResult = lookupTerminology(text, targetLang);
+    if (terminologyResult) {
+      setCache(text, targetLang, terminologyResult);
+      return terminologyResult;
+    }
+    
     const apiKey = getApiKey(apiIndex);
     if (!apiKey) {
       throw new Error(`API密钥未配置 (索引: ${apiIndex})`);
     }
 
-    // 检查是否为代码注释，需要特殊处理
-    let isCodeComment = false;
-    let commentInfo = null;
-    if (window.GLM_CONFIG && window.GLM_CONFIG.isCodeComment && window.GLM_CONFIG.extractCommentText) {
-      isCodeComment = window.GLM_CONFIG.isCodeComment(text);
-      if (isCodeComment) {
-        commentInfo = window.GLM_CONFIG.extractCommentText(text);
-        console.log('🔧 检测到代码注释，进行特殊处理:', commentInfo);
-      }
-    }
-
-    // 对于代码注释，只翻译注释内容，保持代码格式
-    let textToTranslate = text;
-    if (isCodeComment && commentInfo) {
-      textToTranslate = commentInfo.commentContent;
-      console.log('📝 提取注释内容进行翻译:', textToTranslate);
-    }
-
-    // 增强文本预处理
-    const { text: processedText, protectedTexts, complexity, originalLength } = preprocessText(textToTranslate);
-
-    // 检查缓存（包括翻译记忆）
-    const cacheKey = isCodeComment ? `comment_${processedText}` : processedText;
-    const cached = getFromCache(cacheKey, targetLang);
+    // 检查缓存
+    const cached = getFromCache(text, targetLang);
     if (cached) {
-      let result = postprocessText(cached.translation, protectedTexts);
-      
-      // 如果是代码注释，需要恢复原始格式
-      if (isCodeComment && commentInfo) {
-        result = commentInfo.replacement.replace('$1', result);
-      }
-      
-      console.log(`${cached.source === 'memory' ? '🧠' : '⚡'} ${cached.source === 'memory' ? '翻译记忆' : '缓存'}命中: ${text.slice(0, 30)}...`);
-      
-      // 记录性能
-      if (window.GLM_CONFIG && window.GLM_CONFIG.trackPerformance) {
-        window.GLM_CONFIG.trackPerformance('cache_hit', Date.now() - startTime, true);
-      }
-      
-      return result;
+      console.log(`⚡ 缓存命中: ${text.slice(0, 30)}...`);
+      return cached.translation;
     }
 
     // 获取连接
     await connectionPool.acquire();
     
     try {
-      // 使用配置中的提示词模板
-      let prompt;
+      // 简化提示词生成
+      const prompt = generatePrompt(text, targetLang, 'content');
       
-      // 检测文本上下文类型
-      let context = 'content';
-      if (window.GLM_CONFIG && window.GLM_CONFIG.isNavigationText) {
-        context = window.GLM_CONFIG.isNavigationText(processedText) ? 'navigation' : 'content';
-      }
-      
-      if (config.prompts?.translation) {
-        prompt = config.prompts.translation
-          .replace('{targetLang}', LANGUAGE_MAP[targetLang] || targetLang)
-          .replace('{text}', processedText);
-      } else if (window.GLM_CONFIG && window.GLM_CONFIG.generatePrompt) {
-        prompt = window.GLM_CONFIG.generatePrompt(processedText, targetLang, context);
-      } else {
-        prompt = generatePrompt(processedText, targetLang, context);
-      }
-      
-      // 使用优化的API参数
-      const apiParams = config.performance?.fastMode && config.getFastModeParams ? 
-                       config.getFastModeParams(processedText.length) : 
-                       config.getOptimalParams ? config.getOptimalParams(processedText.length) : {
-                         temperature: config.quality?.temperature || 0.1,
-                         max_tokens: Math.min(Math.max(Math.floor(processedText.length * 2.0), 30), 1000),
-                         top_p: config.quality?.topP || 0.85,
-                         frequency_penalty: config.quality?.frequencyPenalty || 0.05,
-                         presence_penalty: config.quality?.presencePenalty || 0.05
-                       };
-      
+      // 简化API参数
       const requestBody = {
-        model: config.api?.model || 'glm-4-flash',
+        model: config.api?.model || 'Qwen/Qwen3-8B',
         messages: [
           {
             role: 'system',
-            content: config.prompts?.system || '你是一个专业的翻译助手，请提供准确、自然、流畅的翻译。保持原文的语气和风格，确保翻译质量。只返回翻译结果，不要添加任何解释或额外内容。'
+            content: window.GLM_CONFIG?.prompts?.system || '你是翻译助手。直接输出译文，不要任何解释。'
           },
           {
             role: 'user',
             content: prompt
           }
         ],
-        ...apiParams
+        temperature: 0.1,
+        max_tokens: Math.min(Math.max(text.length * 3, 50), 2000),
+        top_p: 0.9
       };
 
       const controller = new AbortController();
       translationAbortController = controller;
       
-      // 自适应超时
-      const adaptiveTimeout = window.GLM_CONFIG && window.GLM_CONFIG.getAdaptiveTimeout ? 
-                             window.GLM_CONFIG.getAdaptiveTimeout(originalLength, complexity) : 
-                             REQUEST_TIMEOUT;
-      
-      const timeoutId = setTimeout(() => {
-        controller.abort();
-      }, adaptiveTimeout);
+      const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
 
-      const response = await fetch('https://open.bigmodel.cn/api/paas/v4/chat/completions', {
+      // 使用配置里的 endpoint（已在 glm-config.js 中切换到硅基流动）
+      const endpoint = config.api?.endpoint || 'https://api.siliconflow.cn/v1/chat/completions';
+
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${apiKey}`,
-          'Connection': config.api?.keepAlive ? 'keep-alive' : 'close',
-          'Keep-Alive': config.api?.keepAlive ? 'timeout=30, max=100' : undefined
+          // 硅基流动为标准 HTTPS 接口，额外的 Connection/Keep-Alive 头不是必须
         },
         body: JSON.stringify(requestBody),
         signal: controller.signal
@@ -815,41 +756,14 @@
 
       const translatedText = data.choices[0].message.content.trim();
       
-      // 检查API返回的内容是否包含占位符错误信息
-      if (translatedText.toLowerCase().includes('placeholder') || 
-          translatedText.toLowerCase().includes('占位符') ||
-          translatedText.includes('need to be replaced') ||
-          translatedText.includes('需要替换')) {
-        console.warn('⚠️ API返回占位符相关错误，尝试清理文本后重试');
-        
-        // 如果是第一次遇到这个错误，尝试用原始文本重新翻译
-        if (retryCount === 0) {
-          return translateWithGLM(text.replace(/[{}\[\]$_]/g, ''), targetLang, retryCount + 1);
-        } else {
-          // 如果重试仍然失败，返回原文
-          console.error('❌ 多次尝试后仍然出现占位符错误，返回原文');
-          return text;
-        }
-      }
-      
-      // 简化缓存策略
-      const cacheKey = isCodeComment ? `comment_${processedText}` : processedText;
-      setCache(cacheKey, targetLang, translatedText);
-      
-      // 文本后处理
-      let finalText = postprocessText(translatedText, protectedTexts);
-      
-      // 如果是代码注释，需要恢复原始格式
-      if (isCodeComment && commentInfo) {
-        finalText = commentInfo.replacement.replace('$1', finalText);
-        console.log('🔧 代码注释格式化完成:', finalText);
-      }
+      // 缓存结果
+      setCache(text, targetLang, translatedText);
       
       // 记录性能
       const duration = Date.now() - startTime;
+      console.log(`⚡ 翻译完成 (${duration}ms): ${text.slice(0, 20)}... -> ${translatedText.slice(0, 20)}...`);
       
-      console.log(`⚡ 翻译完成 (${duration}ms): ${text.slice(0, 20)}... -> ${finalText.slice(0, 20)}...`);
-      return finalText;
+      return translatedText;
 
     } catch (error) {
       const duration = Date.now() - startTime;
@@ -1061,86 +975,16 @@
             return NodeFilter.FILTER_REJECT;
           }
           
-          // 使用GLM_CONFIG的shouldTranslateText进行元素检查
+          // 简化：只检查文本是否包含中文
           const text = node.textContent.trim();
-          if (text.length === 0) return NodeFilter.FILTER_REJECT;
+          if (text.length < 2) return NodeFilter.FILTER_REJECT;
           
-          // 检查是否包含中文
-          const hasChinese = /[\u4e00-\u9fff]/.test(text);
-          
-          // 对于包含中文的导航栏和UI元素，优先收集
-          if (hasChinese && parent.classList) {
-            // 导航栏相关元素
-            if (parent.classList.contains('md-ellipsis') ||
-                parent.closest('.md-tabs') ||
-                parent.closest('.md-nav') ||
-                parent.closest('.md-tabs__link') ||
-                parent.closest('.md-nav__link') ||
-                parent.closest('.md-nav__item') ||
-                parent.closest('.md-sidebar') ||
-                tagName === 'li') {
-              console.log(`✅ 优先收集导航栏/目录元素: ${tagName}, 文本: ${text.slice(0, 30)}...`);
-              return NodeFilter.FILTER_ACCEPT;
-            }
+          // 包含中文就收集
+          if (/[\u4e00-\u9fff]/.test(text)) {
+            return NodeFilter.FILTER_ACCEPT;
           }
           
-          // 调用GLM_CONFIG的shouldTranslateText进行检查（但不阻止导航栏元素）
-          if (window.GLM_CONFIG && window.GLM_CONFIG.shouldTranslateText) {
-            if (!window.GLM_CONFIG.shouldTranslateText(parent, text)) {
-              // 如果是包含中文的导航栏元素，仍然允许收集
-              if (hasChinese && (parent.classList?.contains('md-ellipsis') ||
-                                parent.closest('.md-tabs') ||
-                                parent.closest('.md-nav') ||
-                                tagName === 'li')) {
-                console.log(`🔄 GLM_CONFIG建议跳过但强制收集导航栏元素: ${tagName}, 文本: ${text.slice(0, 30)}...`);
-                return NodeFilter.FILTER_ACCEPT;
-              }
-              console.log(`⏭️ GLM_CONFIG跳过元素: ${tagName}, 文本: ${text.slice(0, 30)}...`);
-              return NodeFilter.FILTER_REJECT;
-            }
-          }
-          
-          // 跳过翻译选择框按钮文字和主页标题
-          let element = parent;
-          while (element) {
-            // 检查是否是语言选择相关的元素
-            if (element.classList?.contains('md-header__option') ||
-                element.classList?.contains('md-select') ||
-                element.closest('.md-header__option') ||
-                element.closest('.md-select') ||
-                element.closest('.md-source')) {
-              console.log(`⏭️ 跳过语言选择相关元素: ${element.className}`);
-              return NodeFilter.FILTER_REJECT;
-            }
-            
-            // 检查是否是主页标题相关的元素（防止Wcowin和A college student被翻译）
-            if (element.classList?.contains('wcowin-header-title') ||
-                element.classList?.contains('wcowin-header-subtitle') ||
-                element.classList?.contains('wcowin-header-subtitle-inner') ||
-                element.closest('.wcowin-header-title') ||
-                element.closest('.wcowin-header-subtitle') ||
-                element.closest('.wcowin-header-subtitle-inner')) {
-              console.log(`⏭️ 跳过主页标题相关元素: ${element.className}`);
-              return NodeFilter.FILTER_REJECT;
-            }
-            
-            element = element.parentElement;
-          }
-          
-          // 特别检查导航栏元素，确保它们能被翻译
-          if (parent.classList?.contains('md-ellipsis') || 
-              parent.closest('.md-tabs') ||
-              parent.closest('.md-nav')) {
-            console.log(`🔍 发现导航栏元素: ${parent.className}, 文本: ${text.slice(0, 30)}...`);
-            // 导航栏元素应该被翻译，继续处理
-          }
-          
-          // 特别处理li元素，确保其文本能够被翻译
-          if (parent.tagName.toLowerCase() === 'li') {
-            console.log('🔍 发现li元素文本:', text.slice(0, 50) + '...');
-          }
-          
-          return NodeFilter.FILTER_ACCEPT;
+          return NodeFilter.FILTER_REJECT;
         }
       }
     );
@@ -1723,42 +1567,47 @@
     
     const bgColor = languageColors[targetLanguage] || '#2196F3';
     
-    // 简化样式
+    // 简化样式：参考 Ask AI 按钮的「玻璃」质感，统一视觉风格
     if (isSimple) {
       statusDiv.style.cssText = `
         position: fixed;
-        bottom: 20px;
-        right: 20px;
-        background: ${bgColor};
-        color: white;
-        padding: 8px 16px;
-        border-radius: 6px;
+        bottom: 80px;
+        right: 24px;
+        background: var(--md-default-bg-color--light, rgba(255, 255, 255, 0.9));
+        color: var(--md-default-fg-color, #333);
+        padding: 8px 14px;
+        border-radius: 999px;
         font-size: 13px;
         font-weight: 400;
         z-index: 10000;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
         animation: slideInUp 0.2s ease-out;
-        max-width: 280px;
-        backdrop-filter: blur(5px);
+        max-width: 320px;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
         display: flex;
         align-items: center;
+        border: 1px solid rgba(0, 0, 0, 0.04);
       `;
     } else {
       statusDiv.style.cssText = `
         position: fixed;
-        bottom: 20px;
-        right: 20px;
-        background: ${bgColor};
-        color: white;
-        padding: 12px 20px;
-        border-radius: 8px;
+        bottom: 80px;
+        right: 24px;
+        background: var(--md-default-bg-color--light, rgba(255, 255, 255, 0.95));
+        color: var(--md-default-fg-color, #333);
+        padding: 10px 18px;
+        border-radius: 999px;
         font-size: 14px;
         font-weight: 500;
         z-index: 10000;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
         animation: slideInUp 0.3s ease-out;
         display: flex;
         align-items: center;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(0, 0, 0, 0.05);
       `;
     }
 
@@ -1861,20 +1710,35 @@
     }
   }
 
-  // 取消当前翻译
-  async function cancelCurrentTranslation(reason = '用户取消') {
-    console.log(`🛑 取消翻译: ${reason}`);
+  // 取消当前翻译 - 立即中断版本
+  async function cancelCurrentTranslation(reason = '用户取消', restoreToOriginal = false) {
+    console.log(`🛑 立即取消翻译: ${reason}`);
     shouldCancelTranslation = true;
     
+    // 立即中止所有进行中的API请求
     if (translationAbortController) {
       translationAbortController.abort();
       translationAbortController = null;
     }
     
-    // 等待当前请求完成
-    await new Promise(resolve => setTimeout(resolve, 100));
-    
+    // 立即重置状态，不等待
     isTranslating = false;
+    
+    // 移除进度提示
+    ProgressManager.hide();
+    const statusElement = document.querySelector('.translate-status');
+    if (statusElement) statusElement.remove();
+    
+    // 如果需要恢复原文，立即执行
+    if (restoreToOriginal) {
+      restoreOriginalText();
+      currentLanguage = 'chinese_simplified';
+      saveGlobalTranslationPreference(null);
+      console.log('✅ 已立即恢复为中文');
+    }
+    
+    // 短暂延迟确保状态同步
+    await new Promise(resolve => setTimeout(resolve, 10));
     shouldCancelTranslation = false;
   }
 
@@ -2352,9 +2216,17 @@
       return false;
     }
 
-    // 如果正在翻译，无论目标语言是什么都先取消当前翻译
+    // 如果正在翻译，立即中断
     if (isTranslating) {
-      await cancelCurrentTranslation('切换翻译语言');
+      // 如果切换到中文，立即中断并恢复原文
+      const shouldRestoreImmediately = (language === 'chinese_simplified');
+      await cancelCurrentTranslation('切换翻译语言', shouldRestoreImmediately);
+      
+      // 如果已经恢复到中文，直接返回成功
+      if (shouldRestoreImmediately) {
+        showTranslateStatus(getLocalizedMessage('restored', language), 2000, language);
+        return true;
+      }
     }
 
     // 检查目标语言与当前语言的关系
@@ -2504,6 +2376,37 @@
     }
     
     try {
+      // 拦截语言切换链接，防止404
+      document.addEventListener('click', function(e) {
+        const link = e.target.closest('a');
+        if (link && link.href) {
+          // 支持 #glm-translate-{language} 格式的锚点
+          const hashMatch = link.href.match(/#glm-translate-(\w+)$/);
+          if (hashMatch) {
+            e.preventDefault();
+            e.stopPropagation();
+            const targetLang = hashMatch[1];
+            console.log(`🌐 语言切换: ${targetLang}`);
+            window.translateTo(targetLang);
+            // 移除URL中的hash，避免页面跳转
+            if (window.history && window.history.replaceState) {
+              window.history.replaceState(null, '', window.location.pathname + window.location.search);
+            }
+            return;
+          }
+          // 兼容旧的 javascript:translateTo() 格式
+          if (link.href.includes('translateTo')) {
+            e.preventDefault();
+            e.stopPropagation();
+            const match = link.href.match(/translateTo\(['"]([^'"]+)['"]\)/);
+            if (match) {
+              console.log(`🌐 语言切换: ${match[1]}`);
+              window.translateTo(match[1]);
+            }
+          }
+        }
+      }, true);
+      
       // 加载全局翻译偏好
       const savedPreference = loadGlobalTranslationPreference();
       
@@ -2655,6 +2558,90 @@
     window.document$.subscribe(handleInstantNavigation);
   }
 
+  // DOM变化监听器 - 自动翻译新增内容（借鉴translate.js）
+  let domObserver = null;
+  let observerEnabled = false;
+  
+  function startDOMObserver() {
+    if (domObserver || observerEnabled) return;
+    
+    domObserver = new MutationObserver((mutations) => {
+      if (currentLanguage === 'chinese_simplified' || isTranslating) return;
+      
+      let hasNewText = false;
+      mutations.forEach(mutation => {
+        if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+          mutation.addedNodes.forEach(node => {
+            if (node.nodeType === Node.ELEMENT_NODE || node.nodeType === Node.TEXT_NODE) {
+              const text = node.textContent?.trim();
+              if (text && /[\u4e00-\u9fff]/.test(text)) {
+                hasNewText = true;
+              }
+            }
+          });
+        }
+      });
+      
+      if (hasNewText && !isTranslating) {
+        console.log('🔄 检测到新增中文内容，准备自动翻译...');
+        // 延迟翻译，避免频繁触发
+        clearTimeout(window._glmAutoTranslateTimer);
+        window._glmAutoTranslateTimer = setTimeout(() => {
+          if (currentLanguage !== 'chinese_simplified') {
+            translatePage(currentLanguage, false);
+          }
+        }, 500);
+      }
+    });
+    
+    domObserver.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+    observerEnabled = true;
+    console.log('👁️ DOM监听器已启动');
+  }
+  
+  function stopDOMObserver() {
+    if (domObserver) {
+      domObserver.disconnect();
+      domObserver = null;
+      observerEnabled = false;
+      console.log('👁️ DOM监听器已停止');
+    }
+  }
+
+  // 离线翻译导出功能（借鉴translate.js）
+  function exportTranslationData(targetLang) {
+    const exportData = [];
+    translationCache.forEach((value, key) => {
+      if (key.endsWith(`_${targetLang}`)) {
+        const originalText = key.replace(`_${targetLang}`, '');
+        exportData.push({
+          original: originalText,
+          translated: value.result,
+          language: targetLang
+        });
+      }
+    });
+    
+    // 生成导出文本
+    let exportText = `// 离线翻译数据 - ${LANGUAGE_MAP[targetLang] || targetLang}\n`;
+    exportText += `// 生成时间: ${new Date().toLocaleString()}\n`;
+    exportText += `// 共 ${exportData.length} 条翻译\n\n`;
+    exportText += `const OFFLINE_TRANSLATIONS_${targetLang.toUpperCase()} = {\n`;
+    
+    exportData.forEach(item => {
+      const escaped = item.translated.replace(/'/g, "\\'").replace(/\n/g, '\\n');
+      exportText += `  '${item.original.slice(0, 50)}': '${escaped}',\n`;
+    });
+    
+    exportText += `};\n`;
+    
+    console.log(`📤 导出 ${exportData.length} 条翻译数据`);
+    return exportText;
+  }
+
   // 导出调试接口
   window.GLMTranslate = {
     translateTo: window.translateTo,
@@ -2665,6 +2652,12 @@
     restoreOriginal: restoreOriginalText,
     isTranslating: () => isTranslating,
     collectOriginalTexts: collectAndSaveOriginalTexts,
+    // DOM监听器
+    startObserver: startDOMObserver,
+    stopObserver: stopDOMObserver,
+    isObserving: () => observerEnabled,
+    // 离线翻译导出
+    exportTranslations: exportTranslationData,
     // 页面缓存管理
     getPageCache: () => pageTranslationCache,
     clearPageCache: (pageKey) => {
