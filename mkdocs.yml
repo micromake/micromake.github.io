@@ -91,39 +91,39 @@ extra:
       lang: en
       
     - name: Français
-      link: "javascript:translateTo('french');"
+      link: "#glm-translate-french"
       lang: fr
 
     - name: Deutsch
-      link: "javascript:translateTo('deutsch');"
+      link: "#glm-translate-deutsch"
       lang: de
       
     - name: Español
-      link: "javascript:translateTo('spanish');"
+      link: "#glm-translate-spanish"
       lang: es
       
     - name: Português
-      link: "javascript:translateTo('portuguese');"
+      link: "#glm-translate-portuguese"
       lang: br
       
     - name: العربية
-      link: "javascript:translateTo('arabic');"
+      link: "#glm-translate-arabic"
       lang: sa
 
     - name: 한국어
-      link: "javascript:translateTo('korean');"
+      link: "#glm-translate-korean"
       lang: kr
       
     - name: 日本語
-      link: "javascript:translateTo('japanese');"
+      link: "#glm-translate-japanese"
       lang: ja
       
     - name: 繁体中文
-      link: "javascript:translateTo('chinese_traditional');"
+      link: "#glm-translate-chinese_traditional"
       lang: zh
       
     - name: 简体中文
-      link: "javascript:translateTo('chinese_simplified');"
+      link: "#glm-translate-chinese_simplified"
       lang: zh
       
   # homepage: https://zensical.org
