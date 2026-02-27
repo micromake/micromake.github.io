@@ -87,43 +87,43 @@ plugins:
 extra:
   alternate:
     - name: English
-      link: #glm-translate-english
+      link: "#glm-translate-english"
       lang: en
       
-    - name: Français
-      link: "#glm-translate-french"
-      lang: fr
+    # - name: Français
+    #   link: "#glm-translate-french"
+    #   lang: fr
 
-    - name: Deutsch
-      link: "#glm-translate-deutsch"
-      lang: de
+    # - name: Deutsch
+    #   link: "#glm-translate-deutsch"
+    #   lang: de
       
-    - name: Español
-      link: "#glm-translate-spanish"
-      lang: es
+    # - name: Español
+    #   link: "#glm-translate-spanish"
+    #   lang: es
       
-    - name: Português
-      link: "#glm-translate-portuguese"
-      lang: br
+    # - name: Português
+    #   link: "#glm-translate-portuguese"
+    #   lang: br
       
-    - name: العربية
-      link: "#glm-translate-arabic"
-      lang: sa
+    # - name: العربية
+    #   link: "#glm-translate-arabic"
+    #   lang: sa
 
-    - name: 한국어
-      link: "#glm-translate-korean"
-      lang: kr
+    # - name: 한국어
+    #   link: "#glm-translate-korean"
+    #   lang: kr
       
-    - name: 日本語
-      link: "#glm-translate-japanese"
-      lang: ja
+    # - name: 日本語
+    #   link: "#glm-translate-japanese"
+    #   lang: ja
       
-    - name: 繁体中文
-      link: "#glm-translate-chinese_traditional"
-      lang: zh
+    # - name: 繁体中文
+    #   link: "#glm-translate-chinese_traditional"
+    #   lang: zh
       
     - name: 简体中文
-      link: #glm-translate-chinese_simplified
+      link: "#glm-translate-chinese_simplified"
       lang: zh
       
   # homepage: https://zensical.org
