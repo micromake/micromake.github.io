@@ -85,10 +85,10 @@ plugins:
 
 # Additional configuration
 extra:
-  # alternate:
-  #   - name: English
-  #     link: "#glm-translate-english"
-  #     lang: en
+  alternate:
+    - name: English
+      link: "https://micromake.github.io/docs/"
+      lang: en
       
     # - name: Français
     #   link: "#glm-translate-french"
