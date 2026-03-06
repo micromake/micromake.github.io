@@ -60,21 +60,23 @@ theme:
     - media: "(prefers-color-scheme)"
       toggle:
         icon: lucide/sun-moon
-        name: Switch to light mode
+        name: 切换至日间模式
+
     - media: "(prefers-color-scheme: light)"
       scheme: default
       primary: indigo
       accent: indigo
       toggle:
         icon: lucide/sun
-        name: Switch to dark mode
+        name: 切换至夜间模式
+
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
       primary: indigo
       accent: light blue
       toggle:
         icon: lucide/moon-star
-        name: Switch to system preference
+        name: 切换至自动模式
        
   favicon: assets/logo.png
   logo: assets/logo.png
@@ -88,9 +90,9 @@ extra_css:
   - assets/stylesheets/customize.css
   - assets/stylesheets/ziti.css
 
-extra_javascript:
-  - assets/javascripts/glm-config.js
-  - assets/javascripts/glm-translate.js
+# extra_javascript:
+#   - assets/javascripts/glm-config.js
+#   - assets/javascripts/glm-translate.js
   
 # Plugins
 plugins:
@@ -104,43 +106,6 @@ extra:
       link: "https://micromake.github.io/docs/"
       lang: en
       
-    # - name: Français
-    #   link: "#glm-translate-french"
-    #   lang: fr
-
-    # - name: Deutsch
-    #   link: "#glm-translate-deutsch"
-    #   lang: de
-      
-    # - name: Español
-    #   link: "#glm-translate-spanish"
-    #   lang: es
-      
-    # - name: Português
-    #   link: "#glm-translate-portuguese"
-    #   lang: br
-      
-    # - name: العربية
-    #   link: "#glm-translate-arabic"
-    #   lang: sa
-
-    # - name: 한국어
-    #   link: "#glm-translate-korean"
-    #   lang: kr
-      
-    # - name: 日本語
-    #   link: "#glm-translate-japanese"
-    #   lang: ja
-      
-    # - name: 繁体中文
-    #   link: "#glm-translate-chinese_traditional"
-    #   lang: zh
-      
-    # - name: 简体中文
-    #   link: "#glm-translate-chinese_simplified"
-    #   lang: zh
-      
-  # homepage: https://zensical.org
   scope: /
   annotate:
     json: [.s2]
