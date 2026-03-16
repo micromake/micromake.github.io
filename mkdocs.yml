@@ -153,6 +153,7 @@ nav:
   - 导览: index.md
   - DIY套件: 
             - 三角洲3D打印机:
+              - delta/0/0.md
               - delta/1/1.md
               - delta/2/2.md
               - delta/3/3.md
